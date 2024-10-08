@@ -1,0 +1,41 @@
+{
+  "name": "brahms-syntax-highlighting",
+  "displayName": "Brahms Syntax Highlighting",
+  "description": "Syntax Highlighting for the Agent Based Language Brahms",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.94.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "brahms",
+        "aliases": [
+          "Brahms",
+          "brahms"
+        ],
+        "extensions": [
+          ".b"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "brahms",
+        "scopeName": "source.brahms",
+        "path": "./syntaxes/brahms.tmLanguage.json"
+      }
+    ],
+    "iconThemes": [
+      {
+        "id": "brahms-file-icons",
+        "label": "Brahms File Icons",
+        "path": "./icons/brahms-icons-theme.json"
+      }
+    ]
+  }
+}

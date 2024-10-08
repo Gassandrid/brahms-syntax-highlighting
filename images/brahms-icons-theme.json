@@ -1,0 +1,12 @@
+{
+  "iconDefinitions": {
+    "brahms-file-icon": {
+      "iconPath": "./images/brahms.svg"
+    }
+  },
+  "fileExtensions": {
+    "b": "brahms-file-icon"
+  },
+  "folder": "_folder",
+  "folderExpanded": "_folder_open"
+}
