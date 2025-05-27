@@ -1,8 +1,13 @@
 {
   "name": "brahms-syntax-highlighting",
-  "displayName": "Brahms Syntax Highlighting",
+  "displayName": "Brahms Agent Oriented Programming - Syntax Highlighting",
   "description": "Syntax Highlighting for the Agent Based Language Brahms",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Gassandrid/brahms-syntax-highlighting"
+  },
+  "publisher": "EwanPedersen",
   "engines": {
     "vscode": "^1.94.0"
   },

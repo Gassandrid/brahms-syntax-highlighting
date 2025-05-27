@@ -6,44 +6,28 @@
     { "include": "#comments" },
     { "include": "#strings" },
     { "include": "#numbers" },
-    { "include": "#keywords" },
+    { "include": "#package_statements" },
+    { "include": "#import_statements" },
     { "include": "#agent_declarations" },
     { "include": "#group_declarations" },
-    { "include": "#workframe_declarations" }, 
+    { "include": "#class_declarations" },
+    { "include": "#workframe_declarations" },
+    { "include": "#section_headers" },
+    { "include": "#activities" },
+    { "include": "#workframes" },
     { "include": "#beliefs" },
-    { "include": "#actions" },
-    { "include": "#foreach_loop" },
-    { "include": "#workframe_and_variables" },
-    { "include": "#operators" }, 
-    { "include": "#storage-modifier" },
-    { "include": "#storage-class" },
-    { "include": "#storage-type"}
+    { "include": "#attributes" },
+    { "include": "#variables" },
+    { "include": "#foreach_loops" },
+    { "include": "#when_do_blocks" },
+    { "include": "#java_expressions" },
+    { "include": "#function_calls" },
+    { "include": "#operators" },
+    { "include": "#keywords" },
+    { "include": "#constants" },
+    { "include": "#identifiers" }
   ],
   "repository": {
-    "keywords": {
-      "patterns": [
-        {
-          "name": "keyword.control.brahms",
-          "match": "\\b(class|agent|group|object|workframe|attributes|variables|initial_beliefs|conclude|CreateAgent|delete|instanceof|memberof|when|do|not)\\b"
-        },
-        {
-          "name": "keyword.loop.brahms",
-          "match": "\\b(foreach)\\b"
-        },
-        {
-          "name": "keyword.action.brahms",
-          "match": "\\b(sing|conclude|CreateAgent|delete)\\b"
-        }
-      ]
-    },
-    "operators": {
-      "patterns": [
-        {
-          "name": "keyword.operator.logical.brahms",
-          "match": "\\b(and|or)\\b"
-        }
-      ]
-    },
     "comments": {
       "patterns": [
         {
@@ -53,15 +37,13 @@
         {
           "name": "comment.block.brahms",
           "begin": "/\\*",
-          "end": "\\*/"
-        }
-      ]
-    },
-    "numbers": {
-      "patterns": [
-        {
-          "name": "constant.numeric.brahms",
-          "match": "\\b\\d+(\\.\\d+)?\\b"
+          "end": "\\*/",
+          "patterns": [
+            {
+              "name": "comment.block.documentation.brahms",
+              "match": ".*"
+            }
+          ]
         }
       ]
     },
@@ -74,41 +56,391 @@
           "patterns": [
             {
               "name": "constant.character.escape.brahms",
-              "match": "\\\\."
+              "match": "\\\\[\"\\\\nrt]"
             }
           ]
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.hex.brahms",
+          "match": "\\b0[xX][0-9A-Fa-f]+\\b"
+        },
+        {
+          "name": "constant.numeric.decimal.brahms",
+          "match": "\\b\\d+\\.\\d+\\b"
+        },
+        {
+          "name": "constant.numeric.integer.brahms",
+          "match": "\\b\\d+\\b"
+        }
+      ]
+    },
+    "package_statements": {
+      "patterns": [
+        {
+          "name": "meta.package.brahms",
+          "begin": "^\\s*(package)\\s+",
+          "beginCaptures": {
+            "1": { "name": "keyword.other.package.brahms" }
+          },
+          "end": ";",
+          "endCaptures": {
+            "0": { "name": "punctuation.terminator.brahms" }
+          },
+          "patterns": [
+            {
+              "name": "entity.name.namespace.brahms",
+              "match": "[A-Za-z_][A-Za-z0-9_]*(?:\\.[A-Za-z_][A-Za-z0-9_]*)*"
+            }
+          ]
+        }
+      ]
+    },
+    "import_statements": {
+      "patterns": [
+        {
+          "name": "meta.import.brahms",
+          "begin": "^\\s*(import|jimport)\\s+",
+          "beginCaptures": {
+            "1": { "name": "keyword.other.import.brahms" }
+          },
+          "end": ";",
+          "endCaptures": {
+            "0": { "name": "punctuation.terminator.brahms" }
+          },
+          "patterns": [
+            {
+              "name": "entity.name.namespace.brahms",
+              "match": "[A-Za-z_][A-Za-z0-9_]*(?:\\.[A-Za-z_][A-Za-z0-9_]*)*(?:\\.\\*)?|\\.\\*"
+            }
+          ]
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.brahms",
+          "match": "\\b(when|do|not|if|else|while|for|break|continue|return)\\b"
+        },
+        {
+          "name": "keyword.loop.brahms",
+          "match": "\\b(foreach|forone)\\b"
+        },
+        {
+          "name": "keyword.other.brahms",
+          "match": "\\b(instanceof|memberof|known|start|priority|class|max_duration|variables)\\b"
+        },
+        {
+          "name": "keyword.operator.logical.brahms",
+          "match": "\\b(and|or)\\b"
+        },
+        {
+          "name": "storage.modifier.brahms",
+          "match": "\\b(public|private|protected|static|final)\\b"
         }
       ]
     },
     "agent_declarations": {
       "patterns": [
         {
-          "name": "entity.name.type.agent.brahms",
-          "match": "\\bagent\\s+([A-Za-z_][A-Za-z0-9_]*)\\b",
-          "captures": {
-            "1": { "name": "entity.name.agent.brahms" }
-          }
+          "name": "meta.agent.declaration.brahms",
+          "begin": "\\b(agent)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*",
+          "beginCaptures": {
+            "1": { "name": "storage.type.agent.brahms" },
+            "2": { "name": "entity.name.type.agent.brahms" }
+          },
+          "end": "(?=\\{|$)",
+          "patterns": [
+            {
+              "name": "keyword.other.memberof.brahms",
+              "match": "\\bmemberof\\b"
+            },
+            {
+              "name": "entity.name.type.group.brahms",
+              "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b"
+            },
+            {
+              "name": "punctuation.separator.brahms",
+              "match": ","
+            }
+          ]
         }
       ]
     },
     "group_declarations": {
       "patterns": [
         {
-          "name": "entity.name.type.group.brahms",
-          "match": "\\bgroup\\s+([A-Za-z_][A-Za-z0-9_]*)\\b",
-          "captures": {
-            "1": { "name": "entity.name.group.brahms" }
-          }
+          "name": "meta.group.declaration.brahms",
+          "begin": "\\b(group)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*",
+          "beginCaptures": {
+            "1": { "name": "storage.type.group.brahms" },
+            "2": { "name": "entity.name.type.group.brahms" }
+          },
+          "end": "(?=\\{|$)",
+          "patterns": [
+            {
+              "name": "keyword.other.memberof.brahms",
+              "match": "\\bmemberof\\b"
+            },
+            {
+              "name": "entity.name.type.group.brahms",
+              "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b"
+            },
+            {
+              "name": "punctuation.separator.brahms",
+              "match": ","
+            }
+          ]
+        }
+      ]
+    },
+    "class_declarations": {
+      "patterns": [
+        {
+          "name": "meta.class.declaration.brahms",
+          "begin": "\\b(class)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*",
+          "beginCaptures": {
+            "1": { "name": "storage.type.class.brahms" },
+            "2": { "name": "entity.name.type.class.brahms" }
+          },
+          "end": "(?=\\{|$)",
+          "patterns": [
+            {
+              "name": "keyword.other.extends.brahms",
+              "match": "\\bextends\\b"
+            },
+            {
+              "name": "entity.name.type.class.brahms",
+              "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b"
+            }
+          ]
         }
       ]
     },
     "workframe_declarations": {
       "patterns": [
         {
-          "name": "entity.name.type.workframe.brahms",
-          "match": "\\bworkframe\\s+([A-Za-z_][A-Za-z0-9_]*)\\b",
+          "name": "meta.workframe.declaration.brahms",
+          "begin": "\\b(workframe)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*\\{",
+          "beginCaptures": {
+            "1": { "name": "storage.type.workframe.brahms" },
+            "2": { "name": "entity.name.function.workframe.brahms" }
+          },
+          "end": "\\}",
+          "patterns": [
+            { "include": "#workframe_content" }
+          ]
+        }
+      ]
+    },
+    "section_headers": {
+      "patterns": [
+        {
+          "name": "keyword.section.brahms",
+          "match": "\\b(attributes|initial_beliefs|activities|workframes|variables)\\s*:"
+        }
+      ]
+    },
+    "activities": {
+      "patterns": [
+        {
+          "name": "meta.activity.declaration.brahms",
+          "begin": "\\b(java)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*\\(",
+          "beginCaptures": {
+            "1": { "name": "storage.type.java.brahms" },
+            "2": { "name": "entity.name.function.activity.brahms" }
+          },
+          "end": "\\}",
+          "patterns": [
+            { "include": "#activity_parameters" },
+            { "include": "#activity_properties" },
+            { "include": "#comments" }
+          ]
+        }
+      ]
+    },
+    "activity_parameters": {
+      "patterns": [
+        {
+          "name": "meta.parameter.brahms",
+          "begin": "\\(",
+          "end": "\\)",
+          "patterns": [
+            {
+              "name": "meta.parameter.java.type.brahms",
+              "begin": "\\b(java)\\s*\\(",
+              "beginCaptures": {
+                "1": { "name": "storage.type.java.brahms" }
+              },
+              "end": "\\)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+              "endCaptures": {
+                "1": { "name": "variable.parameter.brahms" }
+              },
+              "patterns": [
+                {
+                  "name": "storage.type.java.generic.brahms",
+                  "match": "[A-Za-z_][A-Za-z0-9_]*(?:<[^>]*>)?"
+                },
+                {
+                  "name": "punctuation.separator.java.brahms",
+                  "match": ","
+                },
+                {
+                  "name": "keyword.operator.java.brahms",
+                  "match": "<|>"
+                }
+              ]
+            },
+            {
+              "name": "meta.parameter.primitive.brahms",
+              "begin": "\\b(string|int|long|float|double|boolean|char|byte|short|void|map)\\s+",
+              "beginCaptures": {
+                "1": { "name": "storage.type.primitive.brahms" }
+              },
+              "end": "(?=,|\\))",
+              "patterns": [
+                {
+                  "name": "variable.parameter.brahms",
+                  "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b"
+                }
+              ]
+            },
+            {
+              "name": "punctuation.separator.parameter.brahms",
+              "match": ","
+            }
+          ]
+        }
+      ]
+    },
+    "activity_properties": {
+      "patterns": [
+        {
+          "name": "keyword.other.activity.property.brahms",
+          "match": "\\b(max_duration|class|when|priority)\\s*:"
+        },
+        {
+          "name": "constant.numeric.brahms",
+          "match": "(?<=max_duration:\\s*)\\d+"
+        },
+        {
+          "name": "string.quoted.double.brahms",
+          "match": "(?<=class:\\s*)\"[^\"]*\""
+        },
+        {
+          "name": "keyword.other.brahms",
+          "match": "(?<=when:\\s*)\\bstart\\b"
+        }
+      ]
+    },
+    "workframes": {
+      "patterns": [
+        {
+          "name": "meta.workframe.brahms",
+          "begin": "\\bworkframe\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*\\{",
+          "beginCaptures": {
+            "1": { "name": "entity.name.function.workframe.brahms" }
+          },
+          "end": "\\}",
+          "patterns": [
+            { "include": "#workframe_content" }
+          ]
+        }
+      ]
+    },
+    "workframe_content": {
+      "patterns": [
+        {
+          "name": "keyword.other.priority.brahms",
+          "match": "\\bpriority\\s*:"
+        },
+        {
+          "name": "keyword.section.variables.brahms",
+          "match": "\\bvariables\\s*:"
+        },
+        { "include": "#variable_declarations" },
+        { "include": "#when_do_blocks" },
+        { "include": "#foreach_loops" },
+        { "include": "#comments" },
+        { "include": "#numbers" }
+      ]
+    },
+    "variable_declarations": {
+      "patterns": [
+        {
+          "name": "meta.variable.declaration.brahms",
+          "begin": "\\b(forone|foreach)\\s*\\(",
+          "beginCaptures": {
+            "1": { "name": "keyword.loop.brahms" }
+          },
+          "end": "\\)\\s*([A-Za-z_][A-Za-z0-9_]*);",
+          "endCaptures": {
+            "1": { "name": "variable.name.brahms" }
+          },
+          "patterns": [
+            {
+              "name": "storage.type.primitive.brahms",
+              "match": "\\b(string|int|long|float|double|boolean|char|byte|short|map)\\b"
+            },
+            {
+              "name": "storage.type.java.brahms",
+              "match": "\\bjava\\s*\\([^)]+\\)"
+            }
+          ]
+        }
+      ]
+    },
+    "when_do_blocks": {
+      "patterns": [
+        {
+          "name": "meta.when.condition.brahms",
+          "begin": "\\b(when)\\s*\\(",
+          "beginCaptures": {
+            "1": { "name": "keyword.control.when.brahms" }
+          },
+          "end": "\\)",
+          "patterns": [
+            { "include": "#belief_expressions" },
+            { "include": "#operators" },
+            { "include": "#strings" },
+            { "include": "#numbers" },
+            { "include": "#identifiers" }
+          ]
+        },
+        {
+          "name": "meta.do.block.brahms",
+          "begin": "\\b(do)\\s*\\{",
+          "beginCaptures": {
+            "1": { "name": "keyword.control.do.brahms" }
+          },
+          "end": "\\}",
+          "patterns": [
+            { "include": "#java_expressions" },
+            { "include": "#function_calls" },
+            { "include": "#variable_assignments" },
+            { "include": "#comments" },
+            { "include": "#strings" },
+            { "include": "#numbers" }
+          ]
+        }
+      ]
+    },
+    "belief_expressions": {
+      "patterns": [
+        {
+          "name": "keyword.other.belief.brahms",
+          "match": "\\b(current|known)\\b"
+        },
+        {
+          "name": "meta.belief.access.brahms",
+          "match": "\\b(current)\\.(\\w+)",
           "captures": {
-            "1": { "name": "entity.name.workframe.brahms" }
+            "1": { "name": "keyword.other.current.brahms" },
+            "2": { "name": "variable.other.member.brahms" }
           }
         }
       ]
@@ -116,143 +448,211 @@
     "beliefs": {
       "patterns": [
         {
-          "name": "keyword.control.belief.brahms",
-          "match": "\\b(current|initial_beliefs|beliefs|performs|has_performed)\\b"
-        },
-        {
-          "name": "meta.belief-expression.brahms",
+          "name": "meta.belief.statement.brahms",
           "begin": "\\(",
+          "end": "\\);",
+          "patterns": [
+            { "include": "#belief_expressions" },
+            { "include": "#operators" },
+            { "include": "#strings" },
+            { "include": "#numbers" },
+            { "include": "#identifiers" }
+          ]
+        }
+      ]
+    },
+    "attributes": {
+      "patterns": [
+        {
+          "name": "meta.attribute.declaration.brahms",
+          "begin": "\\b(public|private|protected)?\\s*(string|int|long|float|double|boolean|char|byte|short|map)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+          "beginCaptures": {
+            "1": { "name": "storage.modifier.brahms" },
+            "2": { "name": "storage.type.primitive.brahms" },
+            "3": { "name": "variable.name.brahms" }
+          },
+          "end": ";",
+          "patterns": [
+            { "include": "#comments" }
+          ]
+        }
+      ]
+    },
+    "variables": {
+      "patterns": [
+        {
+          "name": "meta.variable.declaration.brahms",
+          "match": "\\b(string|int|long|float|double|boolean|char|byte|short|map)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+          "captures": {
+            "1": { "name": "storage.type.primitive.brahms" },
+            "2": { "name": "variable.name.brahms" }
+          }
+        }
+      ]
+    },
+    "foreach_loops": {
+      "patterns": [
+        {
+          "name": "meta.foreach.loop.brahms",
+          "begin": "\\b(foreach|forone)\\s*\\(",
+          "beginCaptures": {
+            "1": { "name": "keyword.loop.brahms" }
+          },
           "end": "\\)",
           "patterns": [
             {
-              "name": "variable.brahms",
-              "match": "\\b[a-zA-Z_][a-zA-Z0-9_]*\\b"
+              "name": "storage.type.primitive.brahms",
+              "match": "\\b(string|int|long|float|double|boolean|char|byte|short|map)\\b"
             },
             {
-              "name": "constant.brahms",
-              "match": "\\b[A-Z][A-Za-z0-9_]*\\b"
-            },
-            {
-              "name": "keyword.operator.brahms",
-              "match": "[=()]"
-            }
-          ]
-        }
-      ]
-    },
-    "actions": {
-      "patterns": [
-        {
-          "name": "keyword.action.brahms",
-          "match": "\\b(sing|conclude|CreateAgent|delete)\\b"
-        },
-        {
-          "name": "meta.action-expression.brahms",
-          "match": "\\(([^)]+)\\)"
-        }
-      ]
-    },
-    "foreach_loop": {
-      "patterns": [
-        {
-          "name": "meta.foreach-loop.brahms",
-          "begin": "\\bforeach\\s*\\(",
-          "end": "\\)\\s*;",
-          "patterns": [
-            {
-              "name": "keyword.loop.brahms",
-              "match": "\\bforeach\\b"
-            },
-            {
-              "name": "storage.type.brahms",
-              "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b(?=\\))"
-            },
-            {
-              "name": "variable.brahms",
-              "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b(?=;)"
-            }
-          ]
-        },
-        {
-          "name": "meta.foreach-condition.brahms",
-          "begin": "\\bwhen\\b",
-          "end": "\\bdo\\s*\\{",
-          "patterns": [
-            {
-              "name": "keyword.control.condition.brahms",
-              "match": "\\bwhen\\b|\\bdo\\b|\\band\\b|\\bnot\\b"
-            },
-            {
-              "name": "variable.brahms",
+              "name": "variable.name.brahms",
               "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b"
-            },
-            {
-              "name": "keyword.operator.brahms",
-              "match": "[=()]"
             }
           ]
-        },
+        }
+      ]
+    },
+    "java_expressions": {
+      "patterns": [
         {
-          "name": "meta.foreach-action.brahms",
-          "begin": "\\bdo\\s*\\{",
-          "end": "\\}",
+          "name": "meta.java.declaration.brahms",
+          "begin": "\\b(java)\\s*\\(([^)]+)\\)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*=\\s*(new)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*\\(",
+          "beginCaptures": {
+            "1": { "name": "storage.type.java.brahms" },
+            "2": { "name": "storage.type.java.type.brahms" },
+            "3": { "name": "variable.name.brahms" },
+            "4": { "name": "keyword.operator.new.brahms" },
+            "5": { "name": "entity.name.type.class.brahms" }
+          },
+          "end": "\\);",
           "patterns": [
+            { "include": "#strings" },
+            { "include": "#numbers" },
+            { "include": "#identifiers" }
+          ]
+        },
+        {
+          "name": "meta.java.type.brahms",
+          "match": "\\bjava\\s*\\(([^)]+)\\)",
+          "captures": {
+            "1": { "name": "storage.type.java.type.brahms" }
+          }
+        }
+      ]
+    },
+    "function_calls": {
+      "patterns": [
+        {
+          "name": "meta.function.call.brahms",
+          "begin": "\\b([A-Za-z_][A-Za-z0-9_]*)\\s*\\(",
+          "beginCaptures": {
+            "1": { "name": "entity.name.function.brahms" }
+          },
+          "end": "\\)",
+          "patterns": [
+            { "include": "#strings" },
+            { "include": "#numbers" },
+            { "include": "#identifiers" },
             {
-              "name": "keyword.action.brahms",
-              "match": "\\b(sing|conclude|CreateAgent|delete)\\b"
-            },
-            {
-              "name": "variable.brahms",
-              "match": "\\b[a-zA-Z_][A-Za-z0-9_]*\\b(?=\\))"
-            },
-            {
-              "name": "constant.brahms",
-              "match": "\\b[A-Z][A-Za-z0-9_]*\\b"
+              "name": "punctuation.separator.parameter.brahms",
+              "match": ","
             }
+          ]
+        },
+        {
+          "name": "entity.name.function.action.brahms",
+          "match": "\\b(println|printBelief|sing|conclude|CreateAgent|delete|CallLLMAgent)\\b"
+        }
+      ]
+    },
+    "variable_assignments": {
+      "patterns": [
+        {
+          "name": "meta.assignment.brahms",
+          "begin": "\\b(string|int|long|float|double|boolean|char|byte|short|map)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*=",
+          "beginCaptures": {
+            "1": { "name": "storage.type.primitive.brahms" },
+            "2": { "name": "variable.name.brahms" }
+          },
+          "end": ";",
+          "patterns": [
+            { "include": "#strings" },
+            { "include": "#numbers" },
+            { "include": "#function_calls" },
+            { "include": "#identifiers" }
           ]
         }
       ]
     },
-    "workframe_and_variables": {
+    "operators": {
       "patterns": [
         {
-          "name": "keyword.declaration.brahms",
-          "match": "\\b(workframes|variables|attributes)\\b"
+          "name": "keyword.operator.assignment.brahms",
+          "match": "="
         },
         {
-          "name": "entity.name.function.workframe.brahms",
-          "match": "\\bworkframe\\s+([A-Za-z_][A-Za-z0-9_]*)\\b",
-          "captures": {
-            "1": { "name": "entity.name.workframe.brahms" }
-          }
+          "name": "keyword.operator.comparison.brahms",
+          "match": "==|!=|<=|>=|<|>"
         },
         {
-          "name": "entity.name.variable.brahms",
-          "match": "\\b(Song|a_song|current)\\b"
+          "name": "keyword.operator.arithmetic.brahms",
+          "match": "\\+|-|\\*|/|%"
+        },
+        {
+          "name": "keyword.operator.logical.brahms",
+          "match": "\\b(and|or)\\b|&&|\\|\\||!"
+        },
+        {
+          "name": "punctuation.separator.brahms",
+          "match": ","
+        },
+        {
+          "name": "punctuation.terminator.brahms",
+          "match": ";"
+        },
+        {
+          "name": "punctuation.accessor.brahms",
+          "match": "\\."
+        },
+        {
+          "name": "punctuation.section.brackets.brahms",
+          "match": "[\\[\\]]"
+        },
+        {
+          "name": "punctuation.section.parens.brahms",
+          "match": "[\\(\\)]"
+        },
+        {
+          "name": "punctuation.section.braces.brahms",
+          "match": "[\\{\\}]"
         }
       ]
     },
-    "storage-modifier": {
+    "constants": {
       "patterns": [
         {
-          "name": "storage.modifier.brahms",
-          "match": "\\b(public|private|protected|static|final|abstract|synchronized|volatile|transient|native|strictfp)\\b"
+          "name": "constant.language.boolean.brahms",
+          "match": "\\b(true|false)\\b"
+        },
+        {
+          "name": "constant.language.null.brahms",
+          "match": "\\bnull\\b"
+        },
+        {
+          "name": "constant.other.brahms",
+          "match": "\\b[A-Z][A-Z0-9_]*\\b"
         }
       ]
     },
-    "storage-class": {
+    "identifiers": {
       "patterns": [
         {
-          "name": "storage.class.brahms",
-          "match": "\\b(class|interface|enum|@interface)\\b"
-        }
-      ]
-    },
-    "storage-type": {
-      "patterns": [
+          "name": "variable.other.brahms",
+          "match": "\\b[a-z_][A-Za-z0-9_]*\\b"
+        },
         {
-          "name": "storage.type.brahms",
-          "match": "\\b(void|boolean|char|byte|short|int|long|float|double)\\b"
+          "name": "entity.name.type.brahms",
+          "match": "\\b[A-Z][A-Za-z0-9_]*\\b"
         }
       ]
     }
