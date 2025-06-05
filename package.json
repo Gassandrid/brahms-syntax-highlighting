@@ -2,7 +2,7 @@
   "name": "brahms-syntax-highlighting",
   "displayName": "Brahms Agent Oriented Programming - Syntax Highlighting",
   "description": "Syntax Highlighting for the Agent Based Language Brahms",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/Gassandrid/brahms-syntax-highlighting"

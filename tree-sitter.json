@@ -1,0 +1,40 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+  "grammars": [
+    {
+      "name": "brahms_parser",
+      "camelcase": "BrahmsParser",
+      "title": "Brahms Parser",
+      "scope": "source.brahms_parser",
+      "file-types": [
+        "b"
+      ],
+      "injection-regex": "^brahms_parser$",
+      "class-name": "TreeSitterBrahmsParser"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "language server and features for the brahms programming language",
+    "authors": [
+      {
+        "name": "Ewan Pedersen",
+        "email": "pedersenewan@gmail.com",
+        "url": "https://ewan.my/"
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/Gassandrid/brahms-syntax-highlighting"
+    }
+  },
+  "bindings": {
+    "c": true,
+    "go": true,
+    "node": true,
+    "python": true,
+    "rust": true,
+    "swift": true,
+    "zig": false
+  }
+}
