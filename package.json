@@ -42,5 +42,8 @@
         "path": "./icons/brahms-icons-theme.json"
       }
     ]
+  },
+  "dependencies": {
+    "node-addon-api": "^8.3.1"
   }
 }

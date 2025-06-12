@@ -17,10 +17,22 @@ const PREC = {
   member: 4,
 };
 
+// const {
+//   grammar,
+//   seq,
+//   repeat,
+//   choice,
+//   field,
+//   optional,
+//   repeat1,
+//   prec,
+//   token,
+// } = require("tree-sitter-cli");
+//
 module.exports = grammar({
   name: "brahms",
 
-  // Lexer
+  // lexer
   extras: ($) => [$.comment, /[\s\f\r\n\t\v]+/],
 
   word: ($) => $.identifier,
@@ -30,20 +42,22 @@ module.exports = grammar({
   conflicts: ($) => [
     [$.qualified_name, $.field_expression],
     [$._expression, $.type],
+    [$.attributes_section, $.attributes_section_item],
+    [$.attributes_section, $._statement],
   ],
 
   rules: {
-    // Program root
+    // program root
     source_file: ($) => repeat($._statement),
 
-    // Statements (top-level)
+    // statements (top-level)
     _statement: ($) =>
       choice(
         $.package_statement,
         $.import_statement,
         $.jimport_statement,
         $._declaration,
-        ";", // stray semicolons
+        ";", // for random semicolons
       ),
 
     _declaration: ($) =>
@@ -101,7 +115,9 @@ module.exports = grammar({
 
     // Specific section rules to resolve ambiguity
     attributes_section: ($) =>
-      seq("attributes", ":", repeat($.attribute_declaration)),
+      seq("attributes", ":", repeat($.attributes_section_item)),
+
+    attributes_section_item: ($) => $.attribute_declaration,
 
     initial_beliefs_section: ($) =>
       seq("initial_beliefs", ":", repeat($.initial_belief)),
@@ -124,7 +140,7 @@ module.exports = grammar({
     // (current.x = "bar");
     initial_belief: ($) => seq("(", $._expression, ")", ";"),
 
-    // --- Activities ---
+    // activities
     activity_declaration: ($) =>
       seq(
         "java", // keyword
@@ -149,7 +165,7 @@ module.exports = grammar({
 
     _activity_value: ($) => choice($.number, $.string_literal, $.identifier),
 
-    // --- Workframes ---
+    // workframes
     workframe_declaration: ($) =>
       seq(
         "workframe",
@@ -198,7 +214,7 @@ module.exports = grammar({
         ";",
       ),
 
-    // --- Expressions & Types ---
+    // expressions & types
     _expression: ($) =>
       choice(
         $.assignment_expression,
@@ -263,7 +279,7 @@ module.exports = grammar({
     new_expression: ($) =>
       seq("new", $.identifier, "(", optional(commaSep($._expression)), ")"),
 
-    // --- Types ---
+    // types
     type: ($) =>
       choice(
         $.java_type,
@@ -279,7 +295,7 @@ module.exports = grammar({
 
     java_type: ($) => seq("java", "(", $.java_type_identifier, ")"),
 
-    // A flexible rule to capture complex Java types like Map<String, Object>
+    // flexible rule for capturing complex Java types like Map<String, Object>, etc
     java_type_identifier: ($) =>
       seq($.qualified_name, optional(seq("<", commaSep1($.type), ">"))),
 
@@ -295,7 +311,7 @@ module.exports = grammar({
 
     qualified_name: ($) => prec.left(sep1($.identifier, ".")),
 
-    // --- Tokens ---
+    // tokens
     identifier: ($) => /[a-zA-Z_][a-zA-Z0-9_]*/,
 
     number: ($) => /[0-9]+(\.[0-9]+)?/,
@@ -309,7 +325,7 @@ module.exports = grammar({
   },
 });
 
-// Helper: one or more rule separated by a separator
+// helper for when there is at least one element
 function sep1(rule, separator) {
   return seq(rule, repeat(seq(separator, rule)));
 }

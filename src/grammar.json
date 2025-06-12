@@ -276,10 +276,14 @@
           "type": "REPEAT",
           "content": {
             "type": "SYMBOL",
-            "name": "attribute_declaration"
+            "name": "attributes_section_item"
           }
         }
       ]
+    },
+    "attributes_section_item": {
+      "type": "SYMBOL",
+      "name": "attribute_declaration"
     },
     "initial_beliefs_section": {
       "type": "SEQ",
@@ -1434,6 +1438,14 @@
     [
       "_expression",
       "type"
+    ],
+    [
+      "attributes_section",
+      "attributes_section_item"
+    ],
+    [
+      "attributes_section",
+      "_statement"
     ]
   ],
   "precedences": [],
